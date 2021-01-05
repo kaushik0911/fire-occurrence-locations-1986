@@ -1,0 +1,52 @@
+<h2>1986 Burned Area Boundaries</h2>
+<a target="_blank" href="https://hub.arcgis.com/datasets/usfs::1986-burned-area-boundaries">data source</a>
+<table style="width:100%">
+  <tr>
+    <td>
+      <div id="mapId"></div>
+    </td>
+    <td>
+      <table id='geoData'>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<script>
+
+  var fireMap = L.map('mapId').setView([33, -117], 13);
+  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      maxZoom: 18,
+      id: 'mapbox/streets-v11',
+      tileSize: 512,
+      zoomOffset: -1,
+      accessToken: '<%= Rails.application.credentials[:access_token] %>'
+    }
+  ).addTo(fireMap);
+
+  var icon = L.icon({iconUrl: 'marker-icon.png'});
+
+  gon.geo_data.forEach(data => {
+    let marker = L.marker(
+      [data.latitude, data.longitude],
+      {icon: icon}).addTo(fireMap).on('click', function(e) {
+        fillTable(data);
+      }
+    );
+
+    let label = "<b>Fire Name : "+data.fire_name+"</b><br>Fire Type : "+ data.fire_type;
+    marker.bindPopup(label).openPopup();
+
+    fillTable(data);
+  });
+
+  function fillTable(data) {
+    let tableRow = "";
+    for (var key of Object.keys(data)) {
+      tableRow += "<tr><td>"+key+"</td><td>"+data[key]+"</td></tr>";
+      document.getElementById("geoData").innerHTML = tableRow;
+    }
+  }
+
+</script>
