@@ -14,6 +14,7 @@
 
 <script>
 
+  // init the map object
   var fireMap = L.map('mapId').setView([33, -117], 13);
   L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -25,8 +26,11 @@
     }
   ).addTo(fireMap);
 
+  // map marker icon
   var icon = L.icon({iconUrl: 'marker-icon.png'});
 
+  // placing each marker on the map
+  // on marker click data will update accordingly
   gon.geo_data.forEach(data => {
     let marker = L.marker(
       [data.latitude, data.longitude],
@@ -35,12 +39,15 @@
       }
     );
 
+    // bubble label
     let label = "<b>Fire Name : "+data.fire_name+"</b><br>Fire Type : "+ data.fire_type;
     marker.bindPopup(label).openPopup();
 
     fillTable(data);
   });
 
+
+  // table implementation for point details
   function fillTable(data) {
     let tableRow = "";
     for (var key of Object.keys(data)) {
